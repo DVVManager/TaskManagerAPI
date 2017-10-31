@@ -1,4 +1,4 @@
-package requests;
+package requestmanager;
 
 /**
  * Created by Administrator on 10/29/2017.

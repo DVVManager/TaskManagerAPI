@@ -1,4 +1,4 @@
-package requests;
+package requestmanager;
 
 import com.jayway.restassured.response.Response;
 
@@ -14,24 +14,25 @@ import static com.jayway.restassured.RestAssured.given;
 public class Request extends BaseRequest {
 
 
-    public Response getMethod(RequestType type){
+    public Response getMethod(PathType type){
         return getMethod(type, Collections.<String, String>emptyMap());
     }
-    public Response getMethod(RequestType type, Map<String,String> params){
+
+    public Response getMethod(PathType type, Map<String,String> params){
         return given().spec(getRequestSpec())
                 .log().all().when()
                 .params(params)
                 .get(type.getPath());
     }
 
-    public Response postMethod(RequestType type,Map<String,String> params){
+    public Response postMethod(PathType type, Map<String,String> params){
         return given().spec(getRequestSpec())
                 .log().all().when()
                 .params(params)
                 .post((type.getPath()));
     }
 
-    public Response postMethod(RequestType type,Class e){
+    public Response postMethod(PathType type, Class e){
         return given().spec(getRequestSpec())
                 .log().all().body(e).when()
                 .post((type.getPath()));

@@ -1,10 +1,9 @@
-package requests;
+package requestmanager;
 
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.builder.RequestSpecBuilder;
 import com.jayway.restassured.specification.RequestSpecification;
 
-import static com.jayway.restassured.RestAssured.basic;
 import static com.jayway.restassured.RestAssured.given;
 
 /**
@@ -33,7 +32,7 @@ public class BaseRequest {
                 .queryParam("api_key",API_KEY)
                 .queryParam("login",LOGIN)
                 .queryParam("password",PASSWORD)
-                .get(RequestType.AUTH.getPath()).getBody().jsonPath().getString("session_id");
+                .get(PathType.AUTH.getPath()).getBody().jsonPath().getString("session_id");
     }
 
     public String getSessionId(){
@@ -47,11 +46,11 @@ public class BaseRequest {
         return requestSpec;
     }
 
-    public enum RequestType {
+    public enum PathType {
         AUTH("/user/authenticate"),USER("/user"), TASK("/item");
         private String path;
 
-        private RequestType(String path) {
+        private PathType(String path) {
             this.path = path;
         }
         public String getPath(){

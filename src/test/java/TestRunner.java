@@ -1,10 +1,11 @@
-import com.google.gson.JsonArray;
-import com.jayway.restassured.RestAssured;
+
 import com.jayway.restassured.response.Response;
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-import requests.BaseRequest;
-import requests.Request;
+import requestmanager.BaseRequest;
+import requestmanager.Request;
 
 import java.util.HashMap;
 
@@ -26,8 +27,23 @@ public class TestRunner {
 
     @Test
     public void getTasksList(){
-        Response response=testReq.getMethod(BaseRequest.RequestType.TASK);
-        System.out.println( "RESPONSE: " +      response.asString());
+        Response response=testReq.getMethod(BaseRequest.PathType.TASK);
+        JSONArray jsonArray=null;
+        try {
+            jsonArray=new JSONArray(response.body().asString());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        for (int i = 0; i <jsonArray.length() ; i++) {
+            try {
+                if(jsonArray.getJSONObject(i).getString("category").equals("1"))
+                System.out.println( "RESPONSE OBJ: " +      jsonArray.getJSONObject(i).getString("title"));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+
     }
 
     @Test
@@ -35,7 +51,7 @@ public class TestRunner {
         HashMap <String,String> testData=new  HashMap();
         testData.put("title","NewTask4");
         testData.put("category","1");
-        Response response=testReq.postMethod(BaseRequest.RequestType.TASK,testData);
+        Response response=testReq.postMethod(BaseRequest.PathType.TASK,testData);
         System.out.println( "RESPONSE: " +      response.asString());
         //response.jsonPath().getList()
     }
