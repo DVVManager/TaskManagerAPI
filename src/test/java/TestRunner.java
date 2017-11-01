@@ -1,8 +1,6 @@
 
 import com.jayway.restassured.response.Response;
 import models.Item;
-import org.json.JSONArray;
-import org.json.JSONException;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import requestmanager.BaseRequest;
@@ -11,6 +9,7 @@ import requestmanager.ResponseParser;
 
 
 import java.util.HashMap;
+import java.util.List;
 
 
 import static com.jayway.restassured.RestAssured.given;
@@ -31,9 +30,8 @@ public class TestRunner {
     @Test
     public void getTasksList(){
         Response response=testReq.getMethod(BaseRequest.PathType.TASK);
-
-        //System.out.println(response.body().jsonPath().getList("", HashMap.class));
-        System.out.println(ResponseParser.getRespnseObjectsList(response,Item.class));
+        List<Item> list=ResponseParser.getResponseObjectsListDynamic(response,Item[].class);
+        list.stream().filter((s)->s.getCategory()==1).forEach(s-> System.out.println(s));
 
     }
 

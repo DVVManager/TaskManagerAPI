@@ -8,8 +8,8 @@ public class Item extends Model {
 
     int user_id;
     int id;
-    String title;
     int category;
+    String title;
     String short_name;
 
     public int getUser_id() {
@@ -39,11 +39,11 @@ public class Item extends Model {
         return this;
     }
 
-    public int getCategorty() {
+    public int getCategory() {
         return category;
     }
 
-    public Item setCategorty(int categorty) {
+    public Item setCategory(int categorty) {
         this.category = categorty;
         return this;
     }

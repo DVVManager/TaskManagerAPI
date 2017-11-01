@@ -1,5 +1,7 @@
 package requestmanager;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.jayway.restassured.response.Response;
 import models.Item;
 import models.Model;
@@ -14,11 +16,12 @@ import java.util.List;
 /**
  * Created by Administrator on 10/29/2017.
  */
-public class ResponseParser {
+public class ResponseParser<T extends Model> {
 
     public static String getResponseBodyAttribute(String attributeName, Response response){
         return response.getBody().jsonPath().getString(attributeName);
     }
+
     public static List<String> getResponseBodyAttributesList(String attributName,Response response) {
         JSONArray jsonArray = null;
         ArrayList<String> attributeValues=new ArrayList<String>();
@@ -39,9 +42,15 @@ public class ResponseParser {
         return attributeValues;
     }
 
-    public static List<Model> getRespnseObjectsList(Response response, Class<? extends Model> clazz){
+
+    public static <T> List<T> getResponseObjectsListDynamic(Response response, Class<T[]> clazz) {
+        T[] resultArray=new Gson().fromJson(response.getBody().asString(), clazz);
+        return Arrays.asList(resultArray);
+    }
+
+    public static List<Model> getResponseObjectsListMain(Response response, Class<? extends Model> clazz){
         List<Model> arrayList=null;
-        if(clazz.getName().contains("Item")){
+        if(clazz.getClass().equals(Item.class)){
             arrayList=Arrays.asList(response.getBody().as(Item[].class));
         }else{
             arrayList=Arrays.asList(response.getBody().as(User[].class));
