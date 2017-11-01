@@ -3,7 +3,8 @@ package models;
 /**
  * Created by Administrator on 10/29/2017.
  */
-public class User {
+public class User extends Model {
+
  private int id;
  private String accountType;
  private String login;
@@ -63,5 +64,17 @@ public class User {
 
     public String getEmailConfirmed() {
         return emailConfirmed;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", accountType='" + accountType + '\'' +
+                ", login='" + login + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", emailConfirmed='" + emailConfirmed + '\'' +
+                '}';
     }
 }

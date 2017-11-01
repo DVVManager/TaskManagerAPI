@@ -3,11 +3,13 @@ package models;
 /**
  * Created by Administrator on 10/29/2017.
  */
-public class Item {
+
+public class Item extends Model {
+
     int user_id;
     int id;
     String title;
-    String categorty;
+    int category;
     String short_name;
 
     public int getUser_id() {
@@ -37,12 +39,12 @@ public class Item {
         return this;
     }
 
-    public String getCategorty() {
-        return categorty;
+    public int getCategorty() {
+        return category;
     }
 
-    public Item setCategorty(String categorty) {
-        this.categorty = categorty;
+    public Item setCategorty(int categorty) {
+        this.category = categorty;
         return this;
     }
 
@@ -54,4 +56,15 @@ public class Item {
         this.short_name = short_name;
         return this;
     }
+    @Override
+    public String toString() {
+        return "Item{" +
+                "user_id=" + user_id +
+                ", id=" + id +
+                ", title='" + title + '\'' +
+                ", category=" + category +
+                ", short_name='" + short_name + '\'' +
+                '}';
+    }
+
 }

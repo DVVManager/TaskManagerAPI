@@ -1,11 +1,14 @@
 
 import com.jayway.restassured.response.Response;
+import models.Item;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import requestmanager.BaseRequest;
 import requestmanager.Request;
+import requestmanager.ResponseParser;
+
 
 import java.util.HashMap;
 
@@ -28,21 +31,9 @@ public class TestRunner {
     @Test
     public void getTasksList(){
         Response response=testReq.getMethod(BaseRequest.PathType.TASK);
-        JSONArray jsonArray=null;
-        try {
-            jsonArray=new JSONArray(response.body().asString());
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        for (int i = 0; i <jsonArray.length() ; i++) {
-            try {
-                if(jsonArray.getJSONObject(i).getString("category").equals("1"))
-                System.out.println( "RESPONSE OBJ: " +      jsonArray.getJSONObject(i).getString("title"));
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
 
+        //System.out.println(response.body().jsonPath().getList("", HashMap.class));
+        System.out.println(ResponseParser.getRespnseObjectsList(response,Item.class));
 
     }
 

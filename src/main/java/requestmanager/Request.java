@@ -19,14 +19,14 @@ public class Request extends BaseRequest {
     }
 
     public Response getMethod(PathType type, Map<String,String> params){
-        return given().spec(getRequestSpec())
+        return given().contentType("application/json").spec(getRequestSpec())
                 .log().all().when()
                 .params(params)
                 .get(type.getPath());
     }
 
     public Response postMethod(PathType type, Map<String,String> params){
-        return given().spec(getRequestSpec())
+        return given().contentType("application/json").spec(getRequestSpec())
                 .log().all().when()
                 .params(params)
                 .post((type.getPath()));
