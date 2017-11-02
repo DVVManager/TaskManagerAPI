@@ -1,21 +1,13 @@
 package requestmanager;
 
 
-import com.google.gson.*;
-import com.google.gson.reflect.TypeToken;
-import com.jayway.restassured.path.json.JsonPath;
-import models.Item;
-import models.Model;
-import models.User;
+import models.*;
 
 import com.jayway.restassured.response.Response;
+import com.google.gson.*;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-
 import static java.util.Arrays.asList;
 
 /**
@@ -41,12 +33,12 @@ public class ResponseParser<T extends Model> {
         }
 
 
-    public static <T> List<T> getResponseObjectsListDynamic(Response response, Class<T[]> clazz) {
+    public static <T> List<T> getResponseAsObjectsListDynamic(Response response, Class<T[]> clazz) {
         T[] resultArray=new Gson().fromJson(response.getBody().asString(), clazz);
         return asList(resultArray);
     }
 
-    public static List<Model> getResponseObjectsListMain(Response response, Class<? extends Model> clazz){
+    public static List<Model> getResponseAsObjectsListCustomed(Response response, Class<? extends Model> clazz){
         List<Model> arrayList=null;
         if(clazz.getClass().equals(Item.class)){
             arrayList= asList(response.getBody().as(Item[].class));
@@ -57,21 +49,23 @@ public class ResponseParser<T extends Model> {
         return arrayList;
     }
 
-    public static <T> T getResponseAsModel(Response response,Class <T[]> clazz,String attribute,int value){
-        List<String> resutlList=new ArrayList<>();
+    public static <T> T getResponseAsModel(Response response,String attribute,String value,Class <T> clazz){
+        List<T> resutlList=new ArrayList<>();
         JsonParser parser=new JsonParser();
+        Gson gsonParser=new GsonBuilder()
+                .registerTypeAdapter(Item.class,new ItemDeserializer())
+                .registerTypeAdapter(User.class,new UserDeserializer())
+                .create();
         JsonElement jsonTree=parser.parse(response.body().asString());
         JsonArray array=jsonTree.getAsJsonArray();
         for (int i = 0; i <array.size() ; i++) {
-            JsonObject object= (JsonObject) array.get(i);
-            if(object.get(attribute).getAsInt()==value)
-            resutlList.add(object.toString());
+            JsonObject object= array.get(i).getAsJsonObject();
+            if(object.has(attribute) && object.getAsJsonPrimitive(attribute).toString().equals(value)){
+                resutlList.add(new Gson().fromJson(object,clazz));
+            }
+
         }
-
-
-
-
-        return null;
+        return resutlList.get(0);
     }
 
     /* public static List<String> getResponseBodyAttributesListOld(String attributName,Response response) {
@@ -85,11 +79,9 @@ public class ResponseParser<T extends Model> {
         for (int i = 0; i < jsonArray.length(); i++) {
             try {
                 attributeValues.add(jsonArray.getJSONObject(i).getString(attributName));
-
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-
         }
         return attributeValues;
     }*/

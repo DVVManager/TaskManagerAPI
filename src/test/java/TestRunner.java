@@ -30,17 +30,8 @@ public class TestRunner {
 
     @Test
     public void getTasksList(){
-       /* Response response=testReq.getMethod(BaseRequest.PathType.TASK);
-        List<Item> list=ResponseParser.getResponseObjectsListDynamic(response,Item[].class);
-        list.stream().filter((s)->s.getCategory()==1).forEach(s-> System.out.println(s));*/
-
-        /*Response response=testReq.getMethod(BaseRequest.PathType.TASK);
-        List<String> list=ResponseParser.getResponseBodyAttributesList("title",response);
-        System.out.println(list);*/
-
         Response response=testReq.getMethod(BaseRequest.PathType.TASK);
-
-        System.out.println(ResponseParser.getResponseAsModel(response,Item[].class,"id",9763431).toString());
+        System.out.println(ResponseParser.getResponseAsModel(response,"id","9763431",Item.class).toString());
     }
 
     @Test
