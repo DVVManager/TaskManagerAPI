@@ -4,7 +4,7 @@ package models;
  * Created by Administrator on 10/29/2017.
  */
 
-public class Item extends Model {
+public class Item implements Model {
 
     int user_id;
     int id;
@@ -56,6 +56,7 @@ public class Item extends Model {
         this.short_name = short_name;
         return this;
     }
+
     @Override
     public String toString() {
         return "Item{" +
