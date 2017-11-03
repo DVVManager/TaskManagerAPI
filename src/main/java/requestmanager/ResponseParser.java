@@ -1,11 +1,16 @@
 package requestmanager;
 
 
+import com.google.gson.reflect.TypeToken;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonToken;
+import com.google.gson.stream.JsonWriter;
 import models.*;
 
 import com.jayway.restassured.response.Response;
 import com.google.gson.*;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import static java.util.Arrays.asList;
@@ -53,6 +58,7 @@ public class ResponseParser<T extends Model> {
         List<T> resutlList=new ArrayList<>();
         JsonParser parser=new JsonParser();
         Gson gsonParser=new GsonBuilder()
+                //.registerTypeAdapterFactory(new NullStringAdapterFactory())
                 .registerTypeAdapter(Item.class,new ItemDeserializer())
                 .registerTypeAdapter(User.class,new UserDeserializer())
                 .create();
@@ -61,7 +67,7 @@ public class ResponseParser<T extends Model> {
         for (int i = 0; i <array.size() ; i++) {
             JsonObject object= array.get(i).getAsJsonObject();
             if(object.has(attribute) && object.getAsJsonPrimitive(attribute).toString().equals(value)){
-                resutlList.add(new Gson().fromJson(object,clazz));
+                resutlList.add(gsonParser.fromJson(object,clazz));
             }
 
         }
@@ -84,6 +90,38 @@ public class ResponseParser<T extends Model> {
             }
         }
         return attributeValues;
+    }*/
+
+    /*public static class NullStringAdapterFactory<T> implements TypeAdapterFactory{
+
+        @Override
+        public <T> TypeAdapter<T> create(Gson gson, TypeToken<T> typeToken) {
+            Class<T> rawType=(Class<T>) typeToken.getRawType();
+            if(rawType!=String.class){
+                return null;
+            }
+            return (TypeAdapter<T>)new StringAdapter();
+        }
+    }
+    public static class StringAdapter extends TypeAdapter<String> {
+
+        @Override
+        public void write(JsonWriter jsonWriter, String s) throws IOException {
+            if(s == null){
+                jsonWriter.nullValue();
+                return;
+            }
+            jsonWriter.value(s);
+        }
+
+        @Override
+        public String read(JsonReader jsonReader) throws IOException {
+            if(jsonReader.peek()== JsonToken.NULL){
+                jsonReader.nextNull();
+                return "No value";
+            }
+            return jsonReader.nextString();
+        }
     }*/
 
 

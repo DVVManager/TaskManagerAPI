@@ -37,8 +37,9 @@ public class TestRunner {
     @Test
     public void createNewTask(){
         HashMap <String,String> testData=new  HashMap();
-        testData.put("title","NewTask4");
+        testData.put("title","NewTask2");
         testData.put("category","1");
+        //testData.put("short_name","02");
         Response response=testReq.postMethod(BaseRequest.PathType.TASK,testData);
         System.out.println( "RESPONSE: " +      response.asString());
         //response.jsonPath().getList()

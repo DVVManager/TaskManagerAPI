@@ -26,7 +26,7 @@ public class Request extends BaseRequest {
     }
 
     public Response postMethod(PathType type, Map<String,String> params){
-        return given().contentType("application/json").spec(getRequestSpec())
+        return given().spec(getRequestSpec())
                 .log().all().when()
                 .params(params)
                 .post((type.getPath()));

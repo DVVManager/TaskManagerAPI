@@ -1,6 +1,8 @@
 package models;
 
 import com.google.gson.*;
+import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.lang.reflect.Type;
 
@@ -14,7 +16,8 @@ public class ItemDeserializer implements JsonDeserializer<Item> {
         itemObject.setCategory(jsonObject.get("category").getAsInt());
         itemObject.setUser_id(jsonObject.get("user_id").getAsInt());
         itemObject.setTitle(jsonObject.get("title").getAsString());
-        itemObject.setShort_name(jsonObject.get("short_name").getAsString());
+        String shortName=(String )ObjectUtils.defaultIfNull(jsonObject.get("short_name"),"Default");
+        itemObject.setShort_name(shortName);
 
 
         return itemObject;
