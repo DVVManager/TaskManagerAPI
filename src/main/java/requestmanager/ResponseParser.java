@@ -18,7 +18,7 @@ import static java.util.Arrays.asList;
 /**
  * Created by Administrator on 10/29/2017.
  */
-public class ResponseParser<T extends Model> {
+public class ResponseParser {
 
     public static String getResponseBodyAttribute(String attributeName, Response response){
         return response.getBody().jsonPath().getString(attributeName);
@@ -54,8 +54,8 @@ public class ResponseParser<T extends Model> {
         return arrayList;
     }
 
-    public static <T> T getResponseAsModel(Response response,String attribute,String value,Class <T> clazz){
-        List<T> resutlList=new ArrayList<>();
+    public static Model getResponseAsModel(Response response,String attribute,String value,Class <? extends Model> clazz){
+        List<Model> resutlList=new ArrayList<>();
         JsonParser parser=new JsonParser();
         Gson gsonParser=new GsonBuilder()
                 //.registerTypeAdapterFactory(new NullStringAdapterFactory())
@@ -66,7 +66,7 @@ public class ResponseParser<T extends Model> {
         JsonArray array=jsonTree.getAsJsonArray();
         for (int i = 0; i <array.size() ; i++) {
             JsonObject object= array.get(i).getAsJsonObject();
-            if(object.has(attribute) && object.getAsJsonPrimitive(attribute).toString().equals(value)){
+            if(object.has(attribute) && object.getAsJsonPrimitive(attribute).getAsString().equals(value)){
                 resutlList.add(gsonParser.fromJson(object,clazz));
             }
 

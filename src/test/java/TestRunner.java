@@ -31,7 +31,8 @@ public class TestRunner {
     @Test
     public void getTasksList(){
         Response response=testReq.getMethod(BaseRequest.PathType.TASK);
-        System.out.println(ResponseParser.getResponseAsModel(response,"id","9763431",Item.class).toString());
+        System.out.println(ResponseParser.getResponseBodyAttributesList("id",response).toString());
+       System.out.println(ResponseParser.getResponseAsModel(response,"id","9763422",Item.class));
     }
 
     @Test

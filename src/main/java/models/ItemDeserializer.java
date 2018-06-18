@@ -16,7 +16,7 @@ public class ItemDeserializer implements JsonDeserializer<Item> {
         itemObject.setCategory(jsonObject.get("category").getAsInt());
         itemObject.setUser_id(jsonObject.get("user_id").getAsInt());
         itemObject.setTitle(jsonObject.get("title").getAsString());
-        String shortName=(String )ObjectUtils.defaultIfNull(jsonObject.get("short_name"),"Default");
+        String shortName=ObjectUtils.defaultIfNull(jsonObject.get("short_name").getAsString(),"Default");
         itemObject.setShort_name(shortName);
 
 
