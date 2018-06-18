@@ -1,16 +1,14 @@
 package requestmanager;
 
 
-import com.google.gson.reflect.TypeToken;
-import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonToken;
-import com.google.gson.stream.JsonWriter;
+
 import models.*;
 
 import com.jayway.restassured.response.Response;
 import com.google.gson.*;
+import org.apache.commons.lang3.ObjectUtils;
 
-import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import static java.util.Arrays.asList;
@@ -24,38 +22,27 @@ public class ResponseParser {
         return response.getBody().jsonPath().getString(attributeName);
     }
 
-    public static List<String> getResponseBodyAttributesList(String attributName,Response response) {
-        List<String> resutlList=new ArrayList<>();
+    public static List<String> getResponseBodyAttributesList(String attributeName,Response response) {
+        List<String> resultList=new ArrayList<>();
         JsonParser parser=new JsonParser();
         JsonElement jsonTree=parser.parse(response.body().asString());
         JsonArray array=jsonTree.getAsJsonArray();
         for (int i = 0; i <array.size() ; i++) {
             JsonObject object= (JsonObject) array.get(i);
-            resutlList.add(object.get(attributName).getAsString());
+            resultList.add(object.get(attributeName).getAsString());
         }
 
-            return resutlList;
+            return resultList;
         }
-
 
     public static <T> List<T> getResponseAsObjectsListDynamic(Response response, Class<T[]> clazz) {
         T[] resultArray=new Gson().fromJson(response.getBody().asString(), clazz);
         return asList(resultArray);
     }
 
-    public static List<Model> getResponseAsObjectsListCustomed(Response response, Class<? extends Model> clazz){
-        List<Model> arrayList=null;
-        if(clazz.getClass().equals(Item.class)){
-            arrayList= asList(response.getBody().as(Item[].class));
-        }else{
-            arrayList= asList(response.getBody().as(User[].class));
-
-        }
-        return arrayList;
-    }
 
     public static Model getResponseAsModel(Response response,String attribute,String value,Class <? extends Model> clazz){
-        List<Model> resutlList=new ArrayList<>();
+        List<Model> resultList=new ArrayList<>();
         JsonParser parser=new JsonParser();
         Gson gsonParser=new GsonBuilder()
                 //.registerTypeAdapterFactory(new NullStringAdapterFactory())
@@ -67,62 +54,44 @@ public class ResponseParser {
         for (int i = 0; i <array.size() ; i++) {
             JsonObject object= array.get(i).getAsJsonObject();
             if(object.has(attribute) && object.getAsJsonPrimitive(attribute).getAsString().equals(value)){
-                resutlList.add(gsonParser.fromJson(object,clazz));
+                resultList.add(gsonParser.fromJson(object,clazz));
             }
 
         }
-        return resutlList.get(0);
+        return resultList.get(0);
     }
 
-    /* public static List<String> getResponseBodyAttributesListOld(String attributName,Response response) {
-        JSONArray jsonArray = null;
-        ArrayList<String> attributeValues=new ArrayList<String>();
-        try {
-            jsonArray = new JSONArray(response.body().asString());
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        for (int i = 0; i < jsonArray.length(); i++) {
-            try {
-                attributeValues.add(jsonArray.getJSONObject(i).getString(attributName));
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-        return attributeValues;
-    }*/
-
-    /*public static class NullStringAdapterFactory<T> implements TypeAdapterFactory{
-
+    public static class ItemDeserializer implements JsonDeserializer<Item> {
         @Override
-        public <T> TypeAdapter<T> create(Gson gson, TypeToken<T> typeToken) {
-            Class<T> rawType=(Class<T>) typeToken.getRawType();
-            if(rawType!=String.class){
-                return null;
-            }
-            return (TypeAdapter<T>)new StringAdapter();
+        public Item deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
+
+            JsonObject jsonObject = jsonElement.getAsJsonObject();
+            Item itemObject=new Item();
+            itemObject.setId(jsonObject.get("id").getAsInt());
+            itemObject.setCategory(jsonObject.get("category").getAsInt());
+            itemObject.setUser_id(jsonObject.get("user_id").getAsInt());
+            itemObject.setTitle(jsonObject.get("title").getAsString());
+            String shortName= (String)ObjectUtils.defaultIfNull(jsonObject.get("short_name"),"Nullable");
+            itemObject.setShort_name(shortName);
+
+
+            return itemObject;
         }
     }
-    public static class StringAdapter extends TypeAdapter<String> {
 
+    public static class UserDeserializer implements JsonDeserializer<User> {
         @Override
-        public void write(JsonWriter jsonWriter, String s) throws IOException {
-            if(s == null){
-                jsonWriter.nullValue();
-                return;
-            }
-            jsonWriter.value(s);
+        public User deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
+            JsonObject jsonObject = jsonElement.getAsJsonObject();
+            User userObject=new User();
+            userObject.setId(jsonObject.get("id").getAsInt());
+            userObject.setAccountType(jsonObject.get("accountType").getAsString());
+            userObject.setEmailConfirmed(jsonObject.get("emailConfirmed").getAsString());
+            userObject.setFirstName(jsonObject.get("firstName").getAsString());
+            userObject.setLastName(jsonObject.get("lastName").getAsString());
+            userObject.setLogin(jsonObject.get("login").getAsString());
+            return userObject;
         }
-
-        @Override
-        public String read(JsonReader jsonReader) throws IOException {
-            if(jsonReader.peek()== JsonToken.NULL){
-                jsonReader.nextNull();
-                return "No value";
-            }
-            return jsonReader.nextString();
-        }
-    }*/
-
+    }
 
 }
